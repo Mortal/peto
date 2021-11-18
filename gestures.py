@@ -20,43 +20,51 @@ def try_parse_gesture(path_data: str) -> Optional[List[Tuple[float, float]]]:
     return points
 
 
+def apply1(a, xy):
+    axx, axy, ayx, ayy, atx, aty = a
+    x, y = xy
+    return (axx * x + ayx * y + atx, axy * x + ayy * y + aty)
+
+
 def dot1(a, b):
+    # [axx ayx atx] [x] = [x axx + y ayx + atx]
+    # [axy ayy aty] [y]   [x axy + y ayy + aty]
+    # lambda x, y: (axx * x + ayx * y + atx, axy * x + ayy * y + aty)
     axx, axy, ayx, ayy, atx, aty = a
     bxx, bxy, byx, byy, btx, bty = b
     # x, y = (
-    #     axx * (bxx * x + bxy * y + btx) + axy * (byx * x + byy * y + bty) + atx,
-    #     ayx * (bxx * x + bxy * y + btx) + ayy * (byx * x + byy * y + bty) + aty,
+    #     axx * (bxx * x + byx * y + btx) + ayx * (bxy * x + byy * y + bty) + atx,
+    #     axy * (bxx * x + byx * y + btx) + ayy * (bxy * x + byy * y + bty) + aty,
     # )
-    # lambda x, y: (axx * x + axy * y + atx, ayx * x + ayy * y + aty)
-    # lambda x, y: (bxx * x + bxy * y + btx, byx * x + byy * y + bty)
+    # lambda x, y: (bxx * x + byx * y + btx, bxy * x + byy * y + bty)
     # lambda x, y: (
-    #     # axx * (bxx * x + bxy * y + btx) + axy * (byx * x + byy * y + bty) + atx,
+    #     # axx * (bxx * x + byx * y + btx) + ayx * (bxy * x + byy * y + bty) + atx,
     #     #
-    #     # axx * bxx * x + axx * bxy * y + axx * btx
-    #     # + axy * byx * x + axy * byy * y + axy * bty
+    #     # axx * bxx * x + axx * byx * y + axx * btx
+    #     # + ayx * bxy * x + ayx * byy * y + ayx * bty
     #     # + atx,
     #     #
-    #     (axx * bxx + axy * byx) * x
-    #     + (axx * bxy + axy * byy) * y
-    #     + axx * btx + axy * bty + atx,
+    #     (axx * bxx + ayx * bxy) * x
+    #     + (axx * byx + ayx * byy) * y
+    #     + axx * btx + ayx * bty + atx,
     #     #
-    #     # ayx * (bxx * x + bxy * y + btx) + ayy * (byx * x + byy * y + bty) + aty,
+    #     # axy * (bxx * x + byx * y + btx) + ayy * (bxy * x + byy * y + bty) + aty,
     #     #
-    #     # ayx * bxx * x + ayx * bxy * y + ayx * btx
-    #     # + ayy * byx * x + ayy * byy * y + ayy * bty
+    #     # axy * bxx * x + axy * byx * y + axy * btx
+    #     # + ayy * bxy * x + ayy * byy * y + ayy * bty
     #     # + aty,
     #     #
-    #     (ayx * bxx + ayy * byx) * x
-    #     + (ayx * bxy + ayy * byy) * y
-    #     + (ayx * btx + ayy * bty + aty),
+    #     (axy * bxx + ayy * bxy) * x
+    #     + (axy * byx + ayy * byy) * y
+    #     + (axy * btx + ayy * bty + aty),
     # )
     return (
-        axx * bxx + axy * byx,
-        axx * bxy + axy * byy,
-        ayx * bxx + ayy * byx,
-        ayx * bxy + ayy * byy,
-        axx * btx + axy * bty + atx,
-        ayx * btx + ayy * bty + aty,
+        axx * bxx + ayx * bxy,
+        axy * bxx + ayy * bxy,
+        axx * byx + ayx * byy,
+        axy * byx + ayy * byy,
+        axx * btx + ayx * bty + atx,
+        axy * btx + ayy * bty + aty,
     )
 
 
@@ -64,13 +72,22 @@ def dot(a_s, b_s):
     return [dot1(a, b) for a in a_s for b in b_s]
 
 
+def translation(x, y):
+    return (1, 0, 0, 1, x, y)
+
+
 # Identity transformation
-ident = (1, 0, 0, 1, 0, 0)
+ident = translation(0, 0)
+assert dot1(ident, ident) == ident
+assert apply1(ident, (4, 3)) == (4, 3)
 # Translations
-trsmallx = (1, 0, 0, 1, 16, 0)
-trlargex = (1, 0, 0, 1, 32, 0)
-trsmally = (1, 0, 0, 1, 0, 16)
-trlargey = (1, 0, 0, 1, 0, 32)
+trsmallx = translation(16, 0)
+trlargex = translation(32, 0)
+assert dot1(trsmallx, trsmallx) == trlargex
+trsmally = translation(0, 16)
+trlargey = translation(0, 32)
+assert dot1(trsmallx, (0, 0, 0, 0, 100, 1000)) == (0, 0, 0, 0, 116, 1000)
+assert apply1(trsmallx, (4, 3)) == (20, 3)
 translarge = dot([ident, trlargex], [ident, trlargey])
 transsmall = dot(
     translarge,
@@ -78,9 +95,18 @@ transsmall = dot(
 )
 # Rotations
 rotccw = (0, -1, 1, 0, 0, 0)
+inv = dot1(rotccw, rotccw)
+assert dot1(inv, inv) == ident
+rotcw = dot1(inv, rotccw)
+assert rotcw != rotccw
+assert dot1(rotccw, inv) == rotcw
+assert dot1(rotcw, rotccw) == ident, (rotcw, rotccw, dot1(rotcw, rotccw))
+assert dot1(rotccw, rotcw) == ident
+assert dot1(inv, translation(4, 3)) == dot1(translation(-4, -3), inv)
+assert dot1(rotccw, translation(1, 0)) == dot1(translation(0, -1), rotccw)
 rot90tiny = dot1(trsmally, rotccw)
 rot90small = dot1(trlargey, rotccw)
-rot90large = dot1(dot1(trlargex, trlargex), rotccw)
+rot90large = dot1(dot1(trlargey, trlargey), rotccw)
 rot180tiny = dot1(rot90tiny, rot90tiny)
 rot180small = dot1(rot90small, rot90small)
 rot180large = dot1(rot90large, rot90large)
@@ -91,15 +117,18 @@ rot4small = dot([ident, rot180small], rot2small)
 rot2large = [ident, rot90large]
 rot4large = dot([ident, rot180large], rot2large)
 # Combinations
-rot4trans4 = dot(translarge, rot4large)
-rot4trans16 = dot(transsmall, rot4small)
-rot2trans16 = dot(transsmall, rot2small)
+rot4trans4 = dot(translarge, rot4small)
+rot4trans16 = dot(transsmall, rot4tiny)
+trans34 = dot(
+    [ident, trsmallx, trlargex],
+    dot([ident, trsmally], [ident, trlargey]),
+)
 
 symmetries = {
-    'rgb(0%,0%,100%)': rot2trans16,
-    'rgb(0%,0%,50.2%)': [ident, rotccw, trsmally, rot90tiny, rot180tiny],
+    'rgb(0%,0%,100%)': dot([ident, rot90large], trans34),
+    'rgb(0%,0%,50.2%)': rot4trans16,
     'rgb(100%,0%,0%)': rot4trans4,
-    'rgb(100%,64.7%,0%)': rot2trans16,
+    'rgb(100%,64.7%,0%)': transsmall,
     'rgb(62.7%,12.5%,94.1%)': rot4trans4,
     'rgb(64.7%,16.5%,16.5%)': rot4trans4,
 }
@@ -127,8 +156,8 @@ def main() -> None:
     for k in sorted(glyphs.keys() & gestures.keys()):
         print("<h1>%s</h1>" % k)
         for symm in symmetries[k]:
-            print('<svg width="64" height="64"><path style="fill:black;stroke:none" d="%s" transform="matrix(%s)" /></svg><hr />' % (glyphs[k], ",".join(map(str, symm))))
-            # print(repr(k), glyphs[k], gestures[k])
+            print([apply1(symm, p) for p in gestures[k]])
+            print('<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="%s" transform="matrix(%s)" /></svg><hr />' % (glyphs[k], ",".join(map(str, symm))))
 
 
 if __name__ == "__main__":

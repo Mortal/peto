@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70218" creator="Ipe 7.2.24">
-<info created="D:20211118183929" modified="D:20211118193520"/>
+<info created="D:20211118183929" modified="D:20211118222813"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -311,14 +311,12 @@ h
 </ipestyle>
 <page>
 <layer name="alpha"/>
-<layer name="beta"/>
 <layer name="gamma"/>
 <layer name="delta"/>
 <layer name="epsilon"/>
 <layer name="zeta"/>
-<view layers="alpha beta gamma delta epsilon zeta" active="zeta"/>
+<view layers="alpha gamma delta epsilon zeta" active="zeta"/>
 <view layers="alpha" active="alpha"/>
-<view layers="beta" active="beta"/>
 <view layers="gamma" active="gamma"/>
 <view layers="delta" active="delta"/>
 <view layers="epsilon" active="epsilon"/>
@@ -359,19 +357,6 @@ h
 <path stroke="brown">
 0 20 m
 12 32 l
-</path>
-</group>
-<group layer="beta">
-<path stroke="blue">
-0 0 m
-0 16 l
-32 16 l
-32 0 l
-h
-</path>
-<path stroke="blue">
-0 8 m
-32 8 l
 </path>
 </group>
 <group layer="alpha">
