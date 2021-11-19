@@ -1,3 +1,4 @@
+import json
 import xml.etree.ElementTree as ET
 from typing import List, Optional, Tuple
 
@@ -152,12 +153,19 @@ def main() -> None:
             ex = gestures.setdefault(stroke, gesture)
             if ex != gesture:
                 print("warning: Duplicate gesture for %r" % (stroke,))
-    print("<!DOCTYPE html>")
-    for k in sorted(glyphs.keys() & gestures.keys()):
-        print("<h1>%s</h1>" % k)
-        for symm in symmetries[k]:
-            print([apply1(symm, p) for p in gestures[k]])
-            print('<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="%s" transform="matrix(%s)" /></svg><hr />' % (glyphs[k], ",".join(map(str, symm))))
+    petodata = {
+        "baseglyphs": [
+            {"glyph": glyphs[k], "gestures": gestures[k], "symmetries": symmetries[k]}
+            for k in sorted(glyphs.keys() & gestures.keys())
+        ]
+    }
+    print("(window.petoinit||function(x){window.petodata=x})(%s)" % json.dumps(petodata, indent=2))
+    # print("<!DOCTYPE html>")
+    # for k in sorted(glyphs.keys() & gestures.keys()):
+    #     print("<h1>%s</h1>" % k)
+    #     for symm in symmetries[k]:
+    #         print([apply1(symm, p) for p in gestures[k]])
+    #         print('<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="%s" transform="matrix(%s)" /></svg><hr />' % (glyphs[k], ",".join(map(str, symm))))
 
 
 if __name__ == "__main__":
