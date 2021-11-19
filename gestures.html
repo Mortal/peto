@@ -5,270 +5,38 @@
 <title>Peto</title>
 <script src="gestures.js"></script>
 <script src="gestures.gen.js"></script>
+<style>
+	html, body { height: 100%; margin: 0; }
+	#canvas {
+		aspect-ratio: 1 / 1;
+		border: 5px solid black;
+		max-height: 100vh;
+		box-sizing: border-box;
+		margin: 0 auto;
+		position: relative;
+	}
+	#indicator {
+		position: absolute;
+		width: 0;
+		height: 0;
+		border: 5px solid green;
+		margin: -5px;
+	}
+	#placement {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+	}
+	#debug {position: absolute; top: 0; left: 0}
+</style>
 </head>
 <body>
+	<div id="debug" style="display: none"></div>
+	<div id="canvas">
+		<div id="indicator" style="display: none"></div>
+		<svg id="placement">
+			<path style="fill: red; stroke: none; display: none" />
+		</svg>
+	</div>
 </body>
 </html>
-<!--
-<h1>rgb(0%,0%,50.2%)</h1>
-[(0.0, 8.0), (8.0, 16.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,0,0)" /></svg><hr />
-[(8.0, 16.0), (16.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,0,16)" /></svg><hr />
-[(16.0, 8.0), (8.0, 0.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,16,16)" /></svg><hr />
-[(8.0, 0.0), (0.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,16,0)" /></svg><hr />
-[(0.0, 24.0), (8.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,0,16)" /></svg><hr />
-[(8.0, 32.0), (16.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,0,32)" /></svg><hr />
-[(16.0, 24.0), (8.0, 16.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,16,32)" /></svg><hr />
-[(8.0, 16.0), (0.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,16,16)" /></svg><hr />
-[(16.0, 8.0), (24.0, 16.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,16,0)" /></svg><hr />
-[(24.0, 16.0), (32.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,16,16)" /></svg><hr />
-[(32.0, 8.0), (24.0, 0.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,32,16)" /></svg><hr />
-[(24.0, 0.0), (16.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,32,0)" /></svg><hr />
-[(16.0, 24.0), (24.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,16,16)" /></svg><hr />
-[(24.0, 32.0), (32.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,16,32)" /></svg><hr />
-[(32.0, 24.0), (24.0, 16.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,32,32)" /></svg><hr />
-[(24.0, 16.0), (16.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,32,16)" /></svg><hr />
-[(0.0, 40.0), (8.0, 48.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,0,32)" /></svg><hr />
-[(8.0, 48.0), (16.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,0,48)" /></svg><hr />
-[(16.0, 40.0), (8.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,16,48)" /></svg><hr />
-[(8.0, 32.0), (0.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,16,32)" /></svg><hr />
-[(0.0, 56.0), (8.0, 64.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,0,48)" /></svg><hr />
-[(8.0, 64.0), (16.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,0,64)" /></svg><hr />
-[(16.0, 56.0), (8.0, 48.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,16,64)" /></svg><hr />
-[(8.0, 48.0), (0.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,16,48)" /></svg><hr />
-[(16.0, 40.0), (24.0, 48.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,16,32)" /></svg><hr />
-[(24.0, 48.0), (32.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,16,48)" /></svg><hr />
-[(32.0, 40.0), (24.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,32,48)" /></svg><hr />
-[(24.0, 32.0), (16.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,32,32)" /></svg><hr />
-[(16.0, 56.0), (24.0, 64.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,16,48)" /></svg><hr />
-[(24.0, 64.0), (32.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,16,64)" /></svg><hr />
-[(32.0, 56.0), (24.0, 48.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,32,64)" /></svg><hr />
-[(24.0, 48.0), (16.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,32,48)" /></svg><hr />
-[(32.0, 8.0), (40.0, 16.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,32,0)" /></svg><hr />
-[(40.0, 16.0), (48.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,32,16)" /></svg><hr />
-[(48.0, 8.0), (40.0, 0.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,48,16)" /></svg><hr />
-[(40.0, 0.0), (32.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,48,0)" /></svg><hr />
-[(32.0, 24.0), (40.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,32,16)" /></svg><hr />
-[(40.0, 32.0), (48.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,32,32)" /></svg><hr />
-[(48.0, 24.0), (40.0, 16.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,48,32)" /></svg><hr />
-[(40.0, 16.0), (32.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,48,16)" /></svg><hr />
-[(48.0, 8.0), (56.0, 16.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,48,0)" /></svg><hr />
-[(56.0, 16.0), (64.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,48,16)" /></svg><hr />
-[(64.0, 8.0), (56.0, 0.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,64,16)" /></svg><hr />
-[(56.0, 0.0), (48.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,64,0)" /></svg><hr />
-[(48.0, 24.0), (56.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,48,16)" /></svg><hr />
-[(56.0, 32.0), (64.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,48,32)" /></svg><hr />
-[(64.0, 24.0), (56.0, 16.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,64,32)" /></svg><hr />
-[(56.0, 16.0), (48.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,64,16)" /></svg><hr />
-[(32.0, 40.0), (40.0, 48.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,32,32)" /></svg><hr />
-[(40.0, 48.0), (48.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,32,48)" /></svg><hr />
-[(48.0, 40.0), (40.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,48,48)" /></svg><hr />
-[(40.0, 32.0), (32.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,48,32)" /></svg><hr />
-[(32.0, 56.0), (40.0, 64.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,32,48)" /></svg><hr />
-[(40.0, 64.0), (48.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,32,64)" /></svg><hr />
-[(48.0, 56.0), (40.0, 48.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,48,64)" /></svg><hr />
-[(40.0, 48.0), (32.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,48,48)" /></svg><hr />
-[(48.0, 40.0), (56.0, 48.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,48,32)" /></svg><hr />
-[(56.0, 48.0), (64.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,48,48)" /></svg><hr />
-[(64.0, 40.0), (56.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,64,48)" /></svg><hr />
-[(56.0, 32.0), (48.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,64,32)" /></svg><hr />
-[(48.0, 56.0), (56.0, 64.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(1,0,0,1,48,48)" /></svg><hr />
-[(56.0, 64.0), (64.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,-1,1,0,48,64)" /></svg><hr />
-[(64.0, 56.0), (56.0, 48.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(-1,0,0,-1,64,64)" /></svg><hr />
-[(56.0, 48.0), (48.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 Z M 0 0 " transform="matrix(0,1,-1,0,64,48)" /></svg><hr />
-<h1>rgb(100%,0%,0%)</h1>
-[(8.0, 32.0), (12.0, 12.0), (32.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(1,0,0,1,0,0)" /></svg><hr />
-[(32.0, 24.0), (12.0, 20.0), (8.0, 0.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(0,-1,1,0,0,32)" /></svg><hr />
-[(24.0, 0.0), (20.0, 20.0), (0.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(-1,0,0,-1,32,32)" /></svg><hr />
-[(0.0, 8.0), (20.0, 12.0), (24.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(0,1,-1,0,32,0)" /></svg><hr />
-[(8.0, 64.0), (12.0, 44.0), (32.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(1,0,0,1,0,32)" /></svg><hr />
-[(32.0, 56.0), (12.0, 52.0), (8.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(0,-1,1,0,0,64)" /></svg><hr />
-[(24.0, 32.0), (20.0, 52.0), (0.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(-1,0,0,-1,32,64)" /></svg><hr />
-[(0.0, 40.0), (20.0, 44.0), (24.0, 64.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(0,1,-1,0,32,32)" /></svg><hr />
-[(40.0, 32.0), (44.0, 12.0), (64.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(1,0,0,1,32,0)" /></svg><hr />
-[(64.0, 24.0), (44.0, 20.0), (40.0, 0.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(0,-1,1,0,32,32)" /></svg><hr />
-[(56.0, 0.0), (52.0, 20.0), (32.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(-1,0,0,-1,64,32)" /></svg><hr />
-[(32.0, 8.0), (52.0, 12.0), (56.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(0,1,-1,0,64,0)" /></svg><hr />
-[(40.0, 64.0), (44.0, 44.0), (64.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(1,0,0,1,32,32)" /></svg><hr />
-[(64.0, 56.0), (44.0, 52.0), (40.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(0,-1,1,0,32,64)" /></svg><hr />
-[(56.0, 32.0), (52.0, 52.0), (32.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(-1,0,0,-1,64,64)" /></svg><hr />
-[(32.0, 40.0), (52.0, 44.0), (56.0, 64.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 32 0 C 14.328125 0 0 14.328125 0 32 L 16 32 C 16 23.164062 23.164062 16 32 16 Z M 32 0 " transform="matrix(0,1,-1,0,64,32)" /></svg><hr />
-<h1>rgb(100%,64.7%,0%)</h1>
-[(0.0, 8.0), (16.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,0,0)" /></svg><hr />
-[(0.0, 24.0), (16.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,0,16)" /></svg><hr />
-[(16.0, 8.0), (32.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,16,0)" /></svg><hr />
-[(16.0, 24.0), (32.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,16,16)" /></svg><hr />
-[(0.0, 40.0), (16.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,0,32)" /></svg><hr />
-[(0.0, 56.0), (16.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,0,48)" /></svg><hr />
-[(16.0, 40.0), (32.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,16,32)" /></svg><hr />
-[(16.0, 56.0), (32.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,16,48)" /></svg><hr />
-[(32.0, 8.0), (48.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,32,0)" /></svg><hr />
-[(32.0, 24.0), (48.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,32,16)" /></svg><hr />
-[(48.0, 8.0), (64.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,48,0)" /></svg><hr />
-[(48.0, 24.0), (64.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,48,16)" /></svg><hr />
-[(32.0, 40.0), (48.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,32,32)" /></svg><hr />
-[(32.0, 56.0), (48.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,32,48)" /></svg><hr />
-[(48.0, 40.0), (64.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,48,32)" /></svg><hr />
-[(48.0, 56.0), (64.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 0 16 L 16 16 L 16 0 Z M 0 0 " transform="matrix(1,0,0,1,48,48)" /></svg><hr />
-<h1>rgb(62.7%,12.5%,94.1%)</h1>
-[(8.0, 0.0), (32.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(1,0,0,1,0,0)" /></svg><hr />
-[(0.0, 24.0), (24.0, 0.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(0,-1,1,0,0,32)" /></svg><hr />
-[(24.0, 32.0), (0.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(-1,0,0,-1,32,32)" /></svg><hr />
-[(32.0, 8.0), (8.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(0,1,-1,0,32,0)" /></svg><hr />
-[(8.0, 32.0), (32.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(1,0,0,1,0,32)" /></svg><hr />
-[(0.0, 56.0), (24.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(0,-1,1,0,0,64)" /></svg><hr />
-[(24.0, 64.0), (0.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(-1,0,0,-1,32,64)" /></svg><hr />
-[(32.0, 40.0), (8.0, 64.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(0,1,-1,0,32,32)" /></svg><hr />
-[(40.0, 0.0), (64.0, 24.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(1,0,0,1,32,0)" /></svg><hr />
-[(32.0, 24.0), (56.0, 0.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(0,-1,1,0,32,32)" /></svg><hr />
-[(56.0, 32.0), (32.0, 8.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(-1,0,0,-1,64,32)" /></svg><hr />
-[(64.0, 8.0), (40.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(0,1,-1,0,64,0)" /></svg><hr />
-[(40.0, 32.0), (64.0, 56.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(1,0,0,1,32,32)" /></svg><hr />
-[(32.0, 56.0), (56.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(0,-1,1,0,32,64)" /></svg><hr />
-[(56.0, 64.0), (32.0, 40.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(-1,0,0,-1,64,64)" /></svg><hr />
-[(64.0, 40.0), (40.0, 64.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 0 L 32.011719 31.984375 L 32 9.386719 L 22.601562 0 Z M 0 0 " transform="matrix(0,1,-1,0,64,32)" /></svg><hr />
-<h1>rgb(64.7%,16.5%,16.5%)</h1>
-[(0.0, 20.0), (12.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(1,0,0,1,0,0)" /></svg><hr />
-[(20.0, 32.0), (32.0, 20.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(0,-1,1,0,0,32)" /></svg><hr />
-[(32.0, 12.0), (20.0, 0.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(-1,0,0,-1,32,32)" /></svg><hr />
-[(12.0, 0.0), (0.0, 12.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(0,1,-1,0,32,0)" /></svg><hr />
-[(0.0, 52.0), (12.0, 64.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(1,0,0,1,0,32)" /></svg><hr />
-[(20.0, 64.0), (32.0, 52.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(0,-1,1,0,0,64)" /></svg><hr />
-[(32.0, 44.0), (20.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(-1,0,0,-1,32,64)" /></svg><hr />
-[(12.0, 32.0), (0.0, 44.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(0,1,-1,0,32,32)" /></svg><hr />
-[(32.0, 20.0), (44.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(1,0,0,1,32,0)" /></svg><hr />
-[(52.0, 32.0), (64.0, 20.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(0,-1,1,0,32,32)" /></svg><hr />
-[(64.0, 12.0), (52.0, 0.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(-1,0,0,-1,64,32)" /></svg><hr />
-[(44.0, 0.0), (32.0, 12.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(0,1,-1,0,64,0)" /></svg><hr />
-[(32.0, 52.0), (44.0, 64.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(1,0,0,1,32,32)" /></svg><hr />
-[(52.0, 64.0), (64.0, 52.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(0,-1,1,0,32,64)" /></svg><hr />
-[(64.0, 44.0), (52.0, 32.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(-1,0,0,-1,64,64)" /></svg><hr />
-[(44.0, 32.0), (32.0, 44.0)]
-<br><svg width="64" height="64"><path style="fill:black;stroke:none" d="M 0 9.417969 L 0 32 L 22.605469 32 Z M 0 9.417969 " transform="matrix(0,1,-1,0,64,32)" /></svg><hr />
--->
